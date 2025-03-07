@@ -14,31 +14,31 @@ export default{
         if (response.status===200){
             let data = await response.json(); 
             sessionStorage.setItem("token",data.access_token);
-            return data;
+            return { success: true, data };
         }else {
-            throw new Error("Error en la autenticación: " + response.status);
+            return { success: false, error:"Error en la autenticación: " + response.status };
         }
         
     },
-    async postRegister(date, email, lastname, name, password, phone,username){
+    async postRegister(dateIn, emailIn, lastnameIn, nameIn, passwordIn, phoneIn,usernameIn){
         let response= await fetch(this.BASE_URL+"/register", {
             method: "POST", 
             headers: {
                 "Content-Type": "application/json" 
             },
             body: JSON.stringify({ 
-                date: date,
-                email: email,
-                lastname: lastname,
-                name: name,
-                password: password,
-                phone: phone,
-                username: username }) 
+                date: dateIn,
+                email: emailIn,
+                lastname: lastnameIn,
+                name: nameIn,
+                password: passwordIn,
+                phone: phoneIn,
+                username: usernameIn }) 
         });
         if (response.status===200){
-            console.log('Usuario creado');
+            return { success: true, data };
         }else {
-            throw new Error("Error en la autenticación: " + response.status);
+            return { success: false, error:"Error en la autenticación: " + response.status };
         }
     },
     async getProfile() {
@@ -139,6 +139,26 @@ export default{
         if (response.status===200){
             let data = await response.json();
             sessionStorage.setItem("dates", JSON.stringify(data));
+        }else if(response.status===401){
+            console.error("Token expirado. Redirigiendo al login...");
+            sessionStorage.clear();
+            window.location.href = "/login";
+        }else {
+            throw new Error("Error en la autenticación: " + response.status);
+        }
+    },
+    async getDatesByDay(){
+        let token = sessionStorage.getItem("token");
+        let response = await fetch(this.BASE_URL + "/date/getByDay", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}` 
+            }
+        });
+        if (response.status===200){
+            let data = await response.json();
+            sessionStorage.setItem("availableDates", JSON.stringify(data));
         }else if(response.status===401){
             console.error("Token expirado. Redirigiendo al login...");
             sessionStorage.clear();
