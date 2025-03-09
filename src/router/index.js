@@ -8,14 +8,28 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: () => import('../layouts/HomeLayout.vue'),
-    },
-    {
-      path: '/login',
-      name: 'login',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../pages/LoginPage.vue'),
+      children:[
+        {
+          path: '/login',
+          name: 'login',
+          component: () => import('../pages/LoginPage.vue'),
+        },
+        {
+          path: '/register',
+          name: 'register',
+          component: () => import('../pages/RegisterPage.vue'),
+        },
+        {
+          path: '/user',
+          name: 'user',
+          component: () => import('../pages/UserDataPage.vue'),
+        },
+        {
+          path: '/date',
+          name: 'date',
+          component: () => import('../pages/DatesDataPage.vue'),
+        },
+      ]
     },
   ],
 })

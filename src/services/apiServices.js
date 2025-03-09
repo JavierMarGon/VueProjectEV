@@ -53,12 +53,14 @@ export default{
         if (response.status===200){
             let data = await response.json();
             sessionStorage.setItem("user", JSON.stringify(data));
+            return { success: true, data };
         }else if(response.status===401){
             console.error("Token expirado. Redirigiendo al login...");
             sessionStorage.clear();
             window.location.href = "/login";
+            return { success: false, data };
         }else {
-            throw new Error("Error en la autenticación: " + response.status);
+            return { success: false, data };
         }
     },
     async getCenters(){
@@ -147,18 +149,22 @@ export default{
             throw new Error("Error en la autenticación: " + response.status);
         }
     },
-    async getDatesByDay(){
+    async getDatesByDay(date, center){
         let token = sessionStorage.getItem("token");
         let response = await fetch(this.BASE_URL + "/date/getByDay", {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}` 
-            }
+            },
+            body: JSON.stringify({ 
+                day: date
+            })
         });
         if (response.status===200){
             let data = await response.json();
-            sessionStorage.setItem("availableDates", JSON.stringify(data));
+            let filteredData = data.filter(item => item.center === center);
+            return filteredData;
         }else if(response.status===401){
             console.error("Token expirado. Redirigiendo al login...");
             sessionStorage.clear();
