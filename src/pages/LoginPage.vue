@@ -30,6 +30,7 @@
     
     const result = await apiServices.postLogin(username.value,password.value)
     if (result.success) {
+      await apiServices.getProfile();
       window.location.href="/";
     } else {
         errorMessage.value = result.error;

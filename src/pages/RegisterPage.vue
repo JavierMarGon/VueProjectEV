@@ -75,7 +75,7 @@ const formData = ref({
   
       if (result.success) {
         console.log("Registro exitoso!");
-        showRegisterForm.value = false; // Ocultar el formulario después de registrar
+        window.location.href="/";// Ocultar el formulario después de registrar
       } else {
         console.log("Error en el registro");
       }

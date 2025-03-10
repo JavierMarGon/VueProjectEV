@@ -5,6 +5,9 @@
     </nav>
     <div v-if="saveDateProcess">
       <!-- Selección de Centro -->
+      <button @click="killTask">
+        Cancelar solicitud
+      </button>
       <h3>Selecciona un centro de salud</h3>
       <select v-model="selectedCenter">
         <option disabled value="">Selecciona un centro</option>
@@ -45,6 +48,18 @@
         </button>
       </div>
     </div>
+    <div v-if="viewDateProcess">
+      <button @click="killTask">
+        Volver
+      </button>
+      <div v-for="(date, index) in dates" :key="index" :value="date.center">
+        {{ date.center }}
+        {{ date.date }}
+        <button @click="cancelDate(date.center,date.date)">
+          Cancelar cita
+        </button>
+      </div>
+    </div>
   </template>
 
 <script setup>
@@ -54,6 +69,7 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import apiServices from '@/services/apiServices';
 
 // Estado
+const saveDateProcess = ref(false);
 const centers = ref([]);
 const selectedDate = ref(null);
 const selectedTime = ref('');
@@ -62,13 +78,12 @@ const unavailableTimes = ref([]);
 const showTimeGrid = ref(false);
 const final_date = ref('');
 const onWork = ref(false);
-const saveDateProcess = ref(false);
-const saveViewProcess = ref(false);
+const viewDateProcess = ref(false);
+const dates= ref([]);
 
 onBeforeMount(async ()=>{
-    await apiServices.getCenters();
-    centers.value = JSON.parse(sessionStorage.getItem("centers"));
-    console.log(centers.value);
+  loadCenterData();
+  loadDatesData();
 });
 // Cargar horas bloqueadas desde sessionStorage
 onMounted(() => {
@@ -83,7 +98,15 @@ const killTask =()=>{
   showTimeGrid.value = false;
   final_date.value = '';
   saveDateProcess.value = false;
-  saveViewProcess.value = false;
+  viewDateProcess.value = false;
+}
+const loadDatesData=async()=>{
+  await apiServices.getDates();
+  dates.value = JSON.parse(sessionStorage.getItem("dates"));
+}
+const loadCenterData=async()=>{
+  await apiServices.getCenters();
+  centers.value = JSON.parse(sessionStorage.getItem("centers"));
 }
 const processingSaveDate =()=>{
   onWork.value=true;
@@ -91,9 +114,13 @@ const processingSaveDate =()=>{
 }
 const processingViewDate =()=>{
   onWork.value=true;
-  saveDateProcess.value=true;
+  viewDateProcess.value=true;
 }
-
+const cancelDate = async(centerName,dateTimestamp)=>{
+  await apiServices.postDateDelete(centerName,dateTimestamp);
+  loadDatesData();
+  alert('Se ha cancelado la cita en '+centerName+' a las '+dateTimestamp);
+}
 // Función para abrir la cuadrícula de horarios
 const openTimeGrid = () => {
     if (selectedDate.value) {

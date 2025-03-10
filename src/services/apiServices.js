@@ -41,6 +41,28 @@ export default{
             return { success: false, error:"Error en la autenticación: " + response.status };
         }
     },
+    async patchUserData(dateIn, emailIn, lastnameIn, nameIn, phoneIn){
+        let token = sessionStorage.getItem("token");
+        let response= await fetch(this.BASE_URL+"/currentUser", {
+            method: "PATCH", 
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}` 
+            },
+            body: JSON.stringify({ 
+                date: dateIn,
+                email: emailIn,
+                lastname: lastnameIn,
+                name: nameIn,
+                phone: phoneIn}) 
+        });
+        if (response.status===200){
+            let data = await response.json();
+            return { success: true, data };
+        }else {
+            return { success: false, error:"Error en la autenticación: " + response.status };
+        }
+    },
     async getProfile() {
         let token = sessionStorage.getItem("token");
         let response = await fetch(this.BASE_URL + "/profile", {
@@ -109,7 +131,7 @@ export default{
     async postDateDelete(centerName, date){
         let token = sessionStorage.getItem("token");
         let response = await fetch(this.BASE_URL + "/date/delete", {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}` 
@@ -131,7 +153,7 @@ export default{
     },
     async getDates(){
         let token = sessionStorage.getItem("token");
-        let response = await fetch(this.BASE_URL + "/dates", {
+        let response = await fetch(this.BASE_URL + "/date/getByUser", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

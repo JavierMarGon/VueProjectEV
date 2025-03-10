@@ -1,32 +1,47 @@
 <template>
-
+    <div>
+        <h1>Bienvenido al área cliente {{ userData.username }}</h1>
+        <ul>
+            <li><strong>Nombre:</strong> <input v-model="editableData.name" :disabled="!isEditing" /></li>
+            <li><strong>Apellido:</strong> <input v-model="editableData.lastname" :disabled="!isEditing" /></li>
+            <li><strong>Email:</strong> <input v-model="editableData.email" :disabled="!isEditing" /></li>
+            <li><strong>Teléfono:</strong> <input v-model="editableData.phone" :disabled="!isEditing" /></li>
+            <li><strong>Fecha de nacimiento:</strong> <input v-model="editableData.date" :disabled="!isEditing" /></li>
+        </ul>
+        <button @click="toggleEdit">{{ isEditing ? 'Cancelar' : 'Editar' }}</button>
+        <button v-if="isEditing" @click="saveChanges">Guardar cambios</button>
+    </div>
 </template>
 <script setup>
 import { ref, onBeforeMount, onMounted} from 'vue';
 import apiServices from '@/services/apiServices';
 
-const userData = ref({
-    name: '',
-    lastname: '',
-    email: '',
-    phone: '',
-    username: '',
-    date: ''
-  });
-const handleUserData = async () => {
-    const result = await apiServices.getProfile();
-    if (result.success) {
-        window.location.href="/";
-    } else {
-        errorMessage.value = result.error;
-    }
-};
-onBeforeMount(()=>{
-    if (!sessionStorage.getItem("user")){
-        handleUserData();
-    }
+const userData = ref({ username: "", name: "", lastname: "", email: "", phone: "", date: "" });
+const editableData = ref({});
+const isEditing = ref(false);
+
+onBeforeMount(async ()=>{
 });
 onMounted(()=>{
-    userData.value=sessionStorage.getItem("user");
+    const storedUser = sessionStorage.getItem("user");
+    if (storedUser) {
+        userData.value = JSON.parse(storedUser);
+        editableData.value = { ...userData.value };
+    } else {
+        console.warn("No se encontraron datos de usuario en sessionStorage.");
+    }
 });
+const toggleEdit = () => {
+    if (isEditing.value) {
+        editableData.value = { ...userData.value }; // Restaurar valores originales si se cancela
+    }
+    isEditing.value = !isEditing.value;
+};
+const saveChanges = async() => {
+    userData.value = { ...editableData.value }; // Guardar los cambios
+    isEditing.value = false;
+    await apiServices.patchUserData(userData.value.date,userData.value.email,userData.value.lastname,userData.value.name, userData.value.phone);
+    sessionStorage.removeItem("user");
+    sessionStorage.setItem("user", JSON.stringify(userData.value));
+};
 </script>
