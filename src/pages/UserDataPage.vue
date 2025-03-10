@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div>
         <h1>Bienvenido al área cliente {{ userData.username }}</h1>
         <ul>
@@ -11,6 +11,21 @@
         <button @click="toggleEdit">{{ isEditing ? 'Cancelar' : 'Editar' }}</button>
         <button v-if="isEditing" @click="saveChanges">Guardar cambios</button>
     </div>
+</template> -->
+<template>
+  <div class="container mt-4">
+    <h1 class="text-primary">Bienvenido al área cliente {{ userData.username }}</h1>
+    <ul class="list-group">
+      <li class="list-group-item" v-for="(value, key) in editableData" :key="key">
+        <strong>{{ key.charAt(0).toUpperCase() + key.slice(1) }}:</strong>
+        <input v-model="editableData[key]" :disabled="!isEditing" class="form-control" />
+      </li>
+    </ul>
+    <div class="mt-3">
+      <button @click="toggleEdit" class="btn btn-warning me-2">{{ isEditing ? 'Cancelar' : 'Editar' }}</button>
+      <button v-if="isEditing" @click="saveChanges" class="btn btn-success">Guardar cambios</button>
+    </div>
+  </div>
 </template>
 <script setup>
 import { ref, onBeforeMount, onMounted} from 'vue';

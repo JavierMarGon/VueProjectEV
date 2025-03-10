@@ -1,10 +1,10 @@
-<template>
+<!-- <template>
     <nav>
       <button v-if="!onWork" @click="processingSaveDate">Pedir Cita</button>
       <button v-if="!onWork" @click="processingViewDate">Ver Citas</button>
     </nav>
     <div v-if="saveDateProcess">
-      <!-- Selección de Centro -->
+      
       <button @click="killTask">
         Cancelar solicitud
       </button>
@@ -16,7 +16,6 @@
         </option>
       </select>
       <div v-if="selectedCenter">
-          <!-- Selector de Fecha -->
           <h3>Selecciona una fecha</h3>
           <Datepicker 
           v-model="selectedDate"
@@ -26,8 +25,6 @@
           @update:modelValue="openTimeGrid" />
       </div>
       
-  
-      <!-- Cuadrícula de Horas -->
       <div v-if="showTimeGrid">
         <h3>Selecciona una hora</h3>
         <div class="grid">
@@ -37,7 +34,7 @@
             @click="selectTime(hour)"
             :class="{ selected: selectedTime === hour }"
           >
-            {{ hour.slice(0, 5) }} <!-- Mostrar solo HH:mm -->
+            {{ hour.slice(0, 5) }} 
           </button>
         </div>
         <p v-if="selectedTime">Fecha seleccionada: {{ final_date }}</p>
@@ -60,8 +57,48 @@
         </button>
       </div>
     </div>
-  </template>
-
+  </template> -->
+<template>
+  <div class="container mt-4">
+    <nav class="mb-3">
+      <button v-if="!onWork" @click="processingSaveDate" class="btn btn-primary me-2">Pedir Cita</button>
+      <button v-if="!onWork" @click="processingViewDate" class="btn btn-info">Ver Citas</button>
+    </nav>
+    <div v-if="saveDateProcess" class="card p-4">
+      <button @click="killTask" class="btn btn-danger">Cancelar solicitud</button>
+      <h3 class="mt-3">Selecciona un centro de salud</h3>
+      <select v-model="selectedCenter" class="form-select">
+        <option disabled value="">Selecciona un centro</option>
+        <option v-for="(center, index) in centers" :key="index" :value="center.name">{{ center.name }}</option>
+      </select>
+      <div v-if="selectedCenter" class="mt-3">
+        <h3>Selecciona una fecha</h3>
+        <Datepicker v-model="selectedDate" :enable-time-picker="false" :min-date="new Date()" :disabled-dates="unavailableDates" @update:modelValue="openTimeGrid" class="form-control" />
+      </div>
+      <div v-if="showTimeGrid" class="mt-3">
+        <h3>Selecciona una hora</h3>
+        <div class="d-flex flex-wrap">
+          <button v-for="hour in availableHours" :key="hour" @click="selectTime(hour)" :class="['btn', selectedTime === hour ? 'btn-primary' : 'btn-outline-primary', 'm-1']">
+            {{ hour.slice(0, 5) }}
+          </button>
+        </div>
+        <p v-if="selectedTime" class="mt-2">Fecha seleccionada: {{ final_date }}</p>
+      </div>
+      <div v-if="final_date">
+        <button @click="saveDate()" class="btn btn-success mt-2">Guardar la cita</button>
+      </div>
+    </div>
+    <div v-if="viewDateProcess" class="card p-4 mt-4">
+      <button @click="killTask" class="btn btn-secondary mb-3">Volver</button>
+      <div class="list-group">
+        <div v-for="(date, index) in dates" :key="index" class="list-group-item d-flex justify-content-between align-items-center">
+          <span>{{ date.center }} - {{ date.date }}</span>
+          <button @click="cancelDate(date.center, date.date)" class="btn btn-danger">Cancelar cita</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 <script setup>
 import { ref, onMounted, computed, onBeforeMount, watch } from 'vue';
 import Datepicker from '@vuepic/vue-datepicker';

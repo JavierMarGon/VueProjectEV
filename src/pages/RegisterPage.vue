@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="handleRegister" class="mt-6">
+    <!-- <form @submit.prevent="handleRegister" class="mt-6">
         <div class="mb-4">
         <label for="name" class="block text-gray-700">Nombre:</label>
         <input type="text" id="name" v-model="formData.name" class="w-full px-4 py-2 mt-2 border border-gray-300 rounded-lg"/>
@@ -38,7 +38,19 @@
         <button type="submit" class="w-full px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600">
         Registrar
         </button>
-    </form>
+    </form> -->
+  <div class="container mt-4">
+    <div class="card p-4 shadow">
+      <h2 class="text-center text-primary">Registro</h2>
+      <form @submit.prevent="handleRegister">
+        <div v-for="(value, key) in formData" :key="key" class="mb-3">
+          <label :for="key" class="form-label">{{ key.charAt(0).toUpperCase() + key.slice(1) }}:</label>
+          <input :type="key === 'password' ? 'password' : 'text'" :id="key" v-model="formData[key]" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-success w-100">Registrar</button>
+      </form>
+    </div>
+  </div>
 </template>
 <script setup>
 import { ref } from 'vue';
