@@ -1,6 +1,9 @@
 <template>
-    <div>
-  
+    <nav>
+      <button v-if="!onWork" @click="processingSaveDate">Pedir Cita</button>
+      <button v-if="!onWork" @click="processingViewDate">Ver Citas</button>
+    </nav>
+    <div v-if="saveDateProcess">
       <!-- Selección de Centro -->
       <h3>Selecciona un centro de salud</h3>
       <select v-model="selectedCenter">
@@ -34,7 +37,12 @@
             {{ hour.slice(0, 5) }} <!-- Mostrar solo HH:mm -->
           </button>
         </div>
-        <p v-if="selectedTime">Hora seleccionada: {{ selectedTime.slice(0, 5) }}</p>
+        <p v-if="selectedTime">Fecha seleccionada: {{ final_date }}</p>
+      </div>
+      <div v-if="final_date">
+        <button @click="saveDate()">
+          Guardar la cita
+        </button>
       </div>
     </div>
   </template>
@@ -52,6 +60,10 @@ const selectedTime = ref('');
 const selectedCenter = ref('');
 const unavailableTimes = ref([]);
 const showTimeGrid = ref(false);
+const final_date = ref('');
+const onWork = ref(false);
+const saveDateProcess = ref(false);
+const saveViewProcess = ref(false);
 
 onBeforeMount(async ()=>{
     await apiServices.getCenters();
@@ -62,6 +74,25 @@ onBeforeMount(async ()=>{
 onMounted(() => {
 
 });
+const killTask =()=>{
+  onWork.value = false;
+  selectedDate.value = null;
+  selectedTime.value = '';
+  selectedCenter.value = '';
+  unavailableTimes.value = [];
+  showTimeGrid.value = false;
+  final_date.value = '';
+  saveDateProcess.value = false;
+  saveViewProcess.value = false;
+}
+const processingSaveDate =()=>{
+  onWork.value=true;
+  saveDateProcess.value=true;
+}
+const processingViewDate =()=>{
+  onWork.value=true;
+  saveDateProcess.value=true;
+}
 
 // Función para abrir la cuadrícula de horarios
 const openTimeGrid = () => {
@@ -77,16 +108,20 @@ const checkAvailable = async ()=>{
         });
 };
 watch(selectedCenter,(newValue,oldValue)=>{
+  if (onWork.value) {
     if (newValue!==oldValue) {
-        if (selectedDate.value) {
-            checkAvailable();
-        }
+      if (selectedDate.value) {
+        checkAvailable();
+      }
     }
+  }
 })
 watch(selectedDate, (newValue, oldValue) => {
+  if (onWork.value) {
     if (newValue !== oldValue) {
         checkAvailable();
     }
+  }
 });
 const allHours = computed(() => {
   const hours = [];
@@ -101,10 +136,16 @@ const availableHours = computed(() => {
   return allHours.value.filter(hour => !unavailableTimes.value.includes(hour));
 });
 
+const saveDate= async()=>{
+  await apiServices.postDateCreate(selectedCenter.value,final_date.value);
+  killTask();
+}
 
 // Seleccionar hora
 const selectTime = (hour) => {
   selectedTime.value = hour;
+  final_date.value = selectedDate.value.toLocaleDateString('es-ES')+" "+selectedTime.value;
+  console.log(final_date.value);
 };
 </script>
 

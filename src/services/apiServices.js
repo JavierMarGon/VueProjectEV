@@ -86,7 +86,7 @@ export default{
     async postDateCreate(centerName, date){
         let token = sessionStorage.getItem("token");
         let response = await fetch(this.BASE_URL + "/date/create", {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}` 
