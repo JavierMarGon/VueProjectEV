@@ -1,40 +1,31 @@
-<!-- <template>
-    <div>
-      <header>
-        <nav>
-            <button v-if="isLoggedIn" @click="logout">Cerrar Sesión</button>
-            <button v-if="!isLoggedIn" @click="$router.push('/login')">Login</button>
-            <button v-if="!isLoggedIn" @click="$router.push('/register')">Registro</button>
-            <button v-if="isLoggedIn" @click="$router.push('/user')">Datos Usuario</button>
-            <button v-if="isLoggedIn" @click="$router.push('/date')">Datos Fechas</button>
-        </nav>
-      </header>
-  
-      <main>
-        <router-view /> 
-      </main>
-    </div>
-  </template> -->
-  <template>
-    <div class="container-fluid bg-light min-vh-100">
-      <header class="bg-primary py-3">
-        <nav class="container d-flex justify-content-between">
-          <div>
-            <button v-if="!isLoggedIn" @click="$router.push('/login')" class="btn btn-outline-light me-2">Login</button>
-            <button v-if="!isLoggedIn" @click="$router.push('/register')" class="btn btn-outline-light">Registro</button>
+<template>
+  <div class="d-flex flex-column min-vh-100 bg-light">
+    <header class="bg-primary py-3">
+      <nav class="container d-flex justify-content-between align-items-center">
+        <button @click="$router.push('/')" class="btn">
+          <img class="logo-textless me-auto" src="../assets/images/LogoTextless.png" alt="">
+        </button>
+        <div class="d-flex">
+          <div v-if="!isLoggedIn" class="me-3">
+            <button @click="$router.push('/login')" class="btn btn-outline-light me-2">Login</button>
+            <button @click="$router.push('/register')" class="btn btn-outline-light">Registro</button>
           </div>
-          <div>
-            <button v-if="isLoggedIn" @click="$router.push('/user')" class="btn btn-light me-2">Datos Usuario</button>
-            <button v-if="isLoggedIn" @click="$router.push('/date')" class="btn btn-light me-2">Datos Fechas</button>
-            <button v-if="isLoggedIn" @click="logout" class="btn btn-danger">Cerrar Sesión</button>
+          <div v-if="isLoggedIn" class="d-flex align-items-center">
+            <button @click="$router.push('/user')" class="btn btn-light me-2">Datos Usuario</button>
+            <button @click="$router.push('/date')" class="btn btn-light me-2">Datos Fechas</button>
+            <button @click="logout" class="btn btn-danger">Cerrar Sesión</button>
           </div>
-        </nav>
-      </header>
-      <main class="container py-4">
-        <router-view />
-      </main>
-    </div>
-  </template>
+        </div>
+      </nav>
+    </header>
+    <main class="container py-4 flex-grow-1">
+      <router-view />
+    </main>
+    <footer class="bg-primary text-white text-center py-3">
+      &copy; 2025 Hospital Sanidad Total - Todos los derechos reservados
+    </footer>
+  </div>
+</template>
 <script setup>
   import { ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';

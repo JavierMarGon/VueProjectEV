@@ -36,7 +36,7 @@ export default{
                 username: usernameIn }) 
         });
         if (response.status===200){
-            return { success: true, data };
+            return { success: true };
         }else {
             return { success: false, error:"Error en la autenticación: " + response.status };
         }

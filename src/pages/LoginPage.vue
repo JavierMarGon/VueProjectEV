@@ -17,9 +17,11 @@
     </div>
   </template> -->
   <template>
-    <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div class="d-flex justify-content-center align-items-center vh-90 bg-light">
+      
       <div class="card p-4 shadow">
-        <h2 class="text-center text-primary">Login</h2>
+        <h2 class="text-center text-primary">Inicia sesión</h2>
+        <img class="img-fluid" src="../assets/images/Logo.png">
         <form @submit.prevent="handleLogin">
           <div class="mb-3">
             <label class="form-label">Username</label>

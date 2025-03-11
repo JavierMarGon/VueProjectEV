@@ -1,4 +1,6 @@
+import '../assets/scss/styles.scss'
 import { createRouter, createWebHistory } from 'vue-router'
+
 
 
 const router = createRouter({
@@ -9,6 +11,11 @@ const router = createRouter({
       name: 'home',
       component: () => import('../layouts/HomeLayout.vue'),
       children:[
+        {
+          path: '/',
+          name: 'homepage',
+          component: () => import('../pages/HomePage.vue'),
+        },
         {
           path: '/login',
           name: 'login',

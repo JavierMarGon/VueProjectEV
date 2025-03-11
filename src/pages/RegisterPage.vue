@@ -45,7 +45,15 @@
       <form @submit.prevent="handleRegister">
         <div v-for="(value, key) in formData" :key="key" class="mb-3">
           <label :for="key" class="form-label">{{ key.charAt(0).toUpperCase() + key.slice(1) }}:</label>
-          <input :type="key === 'password' ? 'password' : 'text'" :id="key" v-model="formData[key]" class="form-control" />
+          <Datepicker
+            v-if="key === 'date'"
+            v-model="formData[key]"
+            class="form-control"
+            :max-date="new Date()"
+            :enable-time-picker="false"
+            placeholder="Selecciona una fecha"
+          />
+          <input v-if="key !== 'date'" :type="key === 'password' ? 'password' : 'text'" :id="key" v-model="formData[key]" class="form-control" />
         </div>
         <button type="submit" class="btn btn-success w-100">Registrar</button>
       </form>
@@ -55,6 +63,9 @@
 <script setup>
 import { ref } from 'vue';
 import apiServices from '@/services/apiServices';
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+
 const formData = ref({
     name: '',
     lastname: '',
@@ -74,9 +85,11 @@ const formData = ref({
   
   // Función para manejar el registro
   const handleRegister = async () => {
+    console.log(formData.value.date.toLocaleDateString('es-ES'));
+    console.log(formData.value);
     try {
       const result = await apiServices.postRegister(
-        formatDate(formData.value.date),
+        formData.value.date.toLocaleDateString('es-ES'),
         formData.value.email,
         formData.value.lastname,
         formData.value.name,
@@ -84,7 +97,7 @@ const formData = ref({
         formData.value.phone,
         formData.value.username
       );
-  
+      console.log(result);
       if (result.success) {
         console.log("Registro exitoso!");
         window.location.href="/";// Ocultar el formulario después de registrar
@@ -92,7 +105,7 @@ const formData = ref({
         console.log("Error en el registro");
       }
     } catch (error) {
-      console.log("Hubo un error al registrar al usuario");
+      console.log("Hubo un error al registrar al usuario ", error);
     }
   };
 </script>

@@ -1,71 +1,15 @@
-<!-- <template>
-    <nav>
-      <button v-if="!onWork" @click="processingSaveDate">Pedir Cita</button>
-      <button v-if="!onWork" @click="processingViewDate">Ver Citas</button>
-    </nav>
-    <div v-if="saveDateProcess">
-      
-      <button @click="killTask">
-        Cancelar solicitud
-      </button>
-      <h3>Selecciona un centro de salud</h3>
-      <select v-model="selectedCenter">
-        <option disabled value="">Selecciona un centro</option>
-        <option v-for="(center, index) in centers" :key="index" :value="center.name">
-            {{ center.name }}
-        </option>
-      </select>
-      <div v-if="selectedCenter">
-          <h3>Selecciona una fecha</h3>
-          <Datepicker 
-          v-model="selectedDate"
-          :enable-time-picker="false" 
-          :min-date="new Date()"
-          :disabled-dates="unavailableDates"
-          @update:modelValue="openTimeGrid" />
-      </div>
-      
-      <div v-if="showTimeGrid">
-        <h3>Selecciona una hora</h3>
-        <div class="grid">
-          <button 
-            v-for="hour in availableHours" 
-            :key="hour" 
-            @click="selectTime(hour)"
-            :class="{ selected: selectedTime === hour }"
-          >
-            {{ hour.slice(0, 5) }} 
-          </button>
-        </div>
-        <p v-if="selectedTime">Fecha seleccionada: {{ final_date }}</p>
-      </div>
-      <div v-if="final_date">
-        <button @click="saveDate()">
-          Guardar la cita
-        </button>
-      </div>
-    </div>
-    <div v-if="viewDateProcess">
-      <button @click="killTask">
-        Volver
-      </button>
-      <div v-for="(date, index) in dates" :key="index" :value="date.center">
-        {{ date.center }}
-        {{ date.date }}
-        <button @click="cancelDate(date.center,date.date)">
-          Cancelar cita
-        </button>
-      </div>
-    </div>
-  </template> -->
 <template>
   <div class="container mt-4">
-    <nav class="mb-3">
-      <button v-if="!onWork" @click="processingSaveDate" class="btn btn-primary me-2">Pedir Cita</button>
-      <button v-if="!onWork" @click="processingViewDate" class="btn btn-info">Ver Citas</button>
+    
+    <nav class="mb-4 d-flex flex-column align-items-center gap-3">
+      <h1 class="text-primary text-center">Gestión de citas</h1>
+      <div v-if="!onWork" class="d-flex gap-3">
+        <button @click="processingSaveDate" class="btn btn-info btn-lg">Pedir Cita</button>
+        <button @click="processingViewDate" class="btn btn-info btn-lg">Ver Citas</button>
+      </div>
     </nav>
     <div v-if="saveDateProcess" class="card p-4">
-      <button @click="killTask" class="btn btn-danger">Cancelar solicitud</button>
+      <button @click="killTask" class="btn custom-danger">Cancelar solicitud</button>
       <h3 class="mt-3">Selecciona un centro de salud</h3>
       <select v-model="selectedCenter" class="form-select">
         <option disabled value="">Selecciona un centro</option>
@@ -85,15 +29,15 @@
         <p v-if="selectedTime" class="mt-2">Fecha seleccionada: {{ final_date }}</p>
       </div>
       <div v-if="final_date">
-        <button @click="saveDate()" class="btn btn-success mt-2">Guardar la cita</button>
+        <button @click="saveDate()" class="btn custom-back mt-2">Guardar la cita</button>
       </div>
     </div>
     <div v-if="viewDateProcess" class="card p-4 mt-4">
-      <button @click="killTask" class="btn btn-secondary mb-3">Volver</button>
+      <button @click="killTask" class="btn custom-back mb-3">Volver</button>
       <div class="list-group">
         <div v-for="(date, index) in dates" :key="index" class="list-group-item d-flex justify-content-between align-items-center">
           <span>{{ date.center }} - {{ date.date }}</span>
-          <button @click="cancelDate(date.center, date.date)" class="btn btn-danger">Cancelar cita</button>
+          <button @click="cancelDate(date.center, date.date)" class="btn custom-danger">Cancelar cita</button>
         </div>
       </div>
     </div>
@@ -203,6 +147,9 @@ const availableHours = computed(() => {
 const saveDate= async()=>{
   await apiServices.postDateCreate(selectedCenter.value,final_date.value);
   killTask();
+  sessionStorage.removeItem("dates");
+  await loadDatesData();
+  processingViewDate();
 }
 
 // Seleccionar hora
