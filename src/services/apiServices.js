@@ -180,7 +180,7 @@ export default{
                 "Authorization": `Bearer ${token}` 
             },
             body: JSON.stringify({ 
-                day: date
+                day: date.strftime("%Y/%m/%d")
             })
         });
         if (response.status===200){
