@@ -11,8 +11,8 @@
             <button @click="$router.push('/register')" class="btn btn-outline-light">Registro</button>
           </div>
           <div v-if="isLoggedIn" class="d-flex align-items-center">
-            <button @click="$router.push('/user')" class="btn btn-light me-2">Datos Usuario</button>
-            <button @click="$router.push('/date')" class="btn btn-light me-2">Datos Fechas</button>
+            <button @click="$router.push('/user')" class="btn btn-light me-2">Gestiona tu perfil</button>
+            <button @click="$router.push('/date')" class="btn btn-light me-2">Gestiona tus citas</button>
             <button @click="logout" class="btn btn-danger">Cerrar Sesión</button>
           </div>
         </div>
@@ -22,7 +22,7 @@
       <router-view />
     </main>
     <footer class="bg-primary text-white text-center py-3">
-      &copy; 2025 Hospital Sanidad Total - Todos los derechos reservados
+      &copy; 2025 Madrid Salud - Todos los derechos reservados
     </footer>
   </div>
 </template>

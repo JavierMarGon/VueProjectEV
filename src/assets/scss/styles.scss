@@ -3,10 +3,14 @@
     width: auto;
 }
 .custom-danger {
-    background-color: red !important;
+    background-color: rgb(255, 117, 117) !important;
     border-color: darkred;
 }
 .custom-back {
-    background-color: rgb(31, 144, 0) !important;
+    background-color: rgb(125, 187, 107) !important;
     border-color: rgb(3, 66, 1);
+}
+.custom-select {
+    background-color: rgb(150, 182, 231) !important;
+    border-color: rgb(1, 29, 66);
 }

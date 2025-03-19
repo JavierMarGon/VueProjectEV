@@ -1,5 +1,6 @@
 <template>
-  <div class="container mt-4">
+  <loadingComponent v-if="loading"></loadingComponent>
+  <div v-else class="container mt-4">
     
     <nav class="mb-4 d-flex flex-column align-items-center gap-3">
       <h1 class="text-primary text-center">Gestión de citas</h1>
@@ -22,7 +23,7 @@
       <div v-if="showTimeGrid" class="mt-3">
         <h3>Selecciona una hora</h3>
         <div class="d-flex flex-wrap">
-          <button v-for="hour in availableHours" :key="hour" @click="selectTime(hour)" :class="['btn', selectedTime === hour ? 'btn-primary' : 'btn-outline-primary', 'm-1']">
+          <button v-for="hour in availableHours" :key="hour" @click="selectTime(hour)" :class="['btn', selectedTime === hour ? 'custom-select' : 'btn-outline-primary', 'm-1']">
             {{ hour.slice(0, 5) }}
           </button>
         </div>
@@ -48,6 +49,7 @@ import { ref, onMounted, computed, onBeforeMount, watch } from 'vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import apiServices from '@/services/apiServices';
+import loadingComponent from '@/components/loadingComponent.vue';
 
 // Estado
 const saveDateProcess = ref(false);
@@ -61,14 +63,15 @@ const final_date = ref('');
 const onWork = ref(false);
 const viewDateProcess = ref(false);
 const dates= ref([]);
-
+const loading = ref(true);
 onBeforeMount(async ()=>{
   loadCenterData();
   loadDatesData();
 });
-// Cargar horas bloqueadas desde sessionStorage
 onMounted(() => {
-
+  setTimeout(() => {
+      loading.value = false;
+    }, 1000);
 });
 const killTask =()=>{
   onWork.value = false;
@@ -145,10 +148,14 @@ const availableHours = computed(() => {
 });
 
 const saveDate= async()=>{
+  loading.value=true;
   await apiServices.postDateCreate(selectedCenter.value,final_date.value);
   killTask();
   sessionStorage.removeItem("dates");
   await loadDatesData();
+  setTimeout(() => {
+      loading.value = false;
+    }, 1000);
   processingViewDate();
 }
 
